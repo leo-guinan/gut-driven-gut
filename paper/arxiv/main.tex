@@ -1,0 +1,333 @@
+\documentclass[letterpaper,12pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{graphicx}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  citecolor=blue,
+  urlcolor=blue,
+}
+
+\title{Closure Cadence on $S^3$: A Toy Model of Force Hierarchy from Quaternion Composition}
+
+\author{
+  Leo Guinan \\
+  MetaSPN / Proximity Fund \\[6pt]
+  \textbf{With computational substrate by Walter Henrique Alves da Silva} \\
+  Open Research Institute, Closure-SDK
+}
+
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We present a toy computational model exploring the hypothesis that the four fundamental forces of physics arise from a single update mechanism operating at different energy scales. The model consists of a lattice of cells governed by one update rule. In the scalar version, cells accumulate energy and fire when a threshold $\tau$ is exceeded; in the $S^3$ version, cells are unit quaternions updated by Hamilton product, and force-like behavior emerges from \emph{closure cadence}---the rate at which running products return to the identity. We report eight experiments with honest accounting: the model successfully produces a qualitative force hierarchy from a single parameter, preserves that hierarchy across lattice dimensions, and exhibits high-energy convergence (CV $1.37 \to 0.02$). It fails to reproduce confinement or electromagnetic cancellation at scale. Two results are unexpected: (1) firing entropy is conserved across all force regimes (CV = 0.018), without tuning; and (2) the Hopf decomposition of quaternion states necessarily shifts from W-dominant at low energy to RGB-dominant at high energy---a geometric theorem that, when coupled with hierarchical closure, produces a natural separation between scalar (existence) and vector (orientation) degrees of freedom. The model is qualitative, not quantitative, spanning only three of the required thirty-nine orders of magnitude. We publish it as a falsifiable framework, not a claim.
+
+\medskip
+\noindent\textbf{Keywords:} force unification, quaternion dynamics, $S^3$ geometry, toy model, closure, Hopf fibration
+\end{abstract}
+
+\section{Introduction}
+
+The Standard Model of particle physics describes four fundamental forces---gravity, electromagnetism, the weak nuclear force, and the strong nuclear force---as distinct interactions mediated by different gauge bosons and governed by different coupling constants. Grand Unified Theories (GUTs) propose that the non-gravitational forces merge into a single interaction at high energies ($\sim 10^{16}$~GeV), and various quantum gravity programs seek to include gravity in this unification \cite{Georgi1974, Weinberg1967}. The running of coupling constants, experimentally confirmed at accessible energies, provides the primary empirical motivation: the three gauge couplings approximately converge when extrapolated upward \cite{Amaldi1991}.
+
+We start from a deliberately naive hypothesis:
+
+\begin{quote}
+\textbf{All four fundamental forces are the same mechanism at different energy scales.} Time at any scale is the observable rate of state transitions. The activation cost to trigger an update differentiates the forces.
+\end{quote}
+
+This is not a theory of physics. It is an \emph{intuition} that we wish to translate into a falsifiable computational framework. The question is whether a single update rule, applied to a lattice with no force-specific parameters, can produce anything resembling the observed force hierarchy---and if so, what structural features of that hierarchy are robust versus accidental.
+
+We are motivated by three observations from known mathematics and physics:
+
+\begin{enumerate}
+  \item \textbf{Hurwitz's theorem} \cite{Hurwitz1898}: The only normed division algebras over the reals are $\mathbb{R}$, $\mathbb{C}$, $\mathbb{H}$, and $\mathbb{O}$, of dimensions 1, 2, 4, and 8. The quaternions $\mathbb{H}$ are the richest \emph{associative} division algebra, and their unit group $S^3$ is diffeomorphic to $\mathrm{SU}(2)$---the gauge group of the weak force. The $1+3$ decomposition (one scalar, three vector components) is not a modeling choice; it is forced by the algebra.
+
+  \item \textbf{Running coupling constants}: The strong, weak, and electromagnetic couplings change with energy scale and approximately converge near the GUT scale. Any model claiming a single mechanism should reproduce at least the qualitative ordering and convergence.
+
+  \item \textbf{Entropic gravity}: Verlinde \cite{Verlinde2011} argued that gravity may emerge from entropic considerations rather than being fundamental. If forces emerge from information processing, a lattice model that conserves informational quantities across force regimes would be consonant with this program.
+\end{enumerate}
+
+We do not claim to advance any of these lines of research. We claim only to have built a toy model, run it honestly, and found some features worth reporting.
+
+The simulation code is available at \url{https://github.com/leo-guinan/gut-driven-gut}. The quaternion substrate builds on Walter da Silva's Closure-SDK \cite{daSilva2025}, available at \url{https://github.com/faltz009/Closure-SDK}.
+
+\section{Model Description}
+
+\subsection{Scalar Version}
+
+The lattice consists of $N$ cells, each carrying a scalar energy $E_i(t)$. At each timestep:
+
+\begin{enumerate}
+  \item Each cell receives energy from a stochastic source: $E_i(t) \leftarrow E_i(t) + \xi_i$, where $\xi_i \sim \mathcal{N}(0, \sigma^2)$.
+  \item If $E_i(t) \geq \tau$ (the activation threshold), the cell \emph{fires}: it redistributes energy to its neighbors and resets.
+  \item All cells update synchronously.
+\end{enumerate}
+
+The threshold $\tau$ is the sole free parameter. By varying $\tau$ across orders of magnitude, we assign different thresholds to different ``force'' regimes:
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lll}
+\toprule
+Force analogue & Threshold $\tau$ & Predicted behavior \\
+\midrule
+Gravitational   & 0.01 (lowest)  & Fires constantly, long range, individually weak \\
+Electromagnetic & 0.10           & Moderate firing rate and range \\
+Weak            & 0.50           & Infrequent, short range \\
+Strong          & 0.90 (highest) & Rare, short range, individually powerful \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The hypothesis predicts that higher-threshold forces fire less frequently but with greater per-event impact---producing a \emph{hierarchy of cadences} from a single rule. Low threshold $=$ diffuse, universal, weak per event (gravity-like). High threshold $=$ rare, local, powerful per event (strong-force-like).
+
+\subsection{$S^3$ Version (Quaternion States)}
+
+In the $S^3$ formulation, each cell's state is a unit quaternion $q_i \in S^3 \subset \mathbb{H}$:
+
+\begin{equation}
+q_i = w_i + x_i\,\mathbf{i} + y_i\,\mathbf{j} + z_i\,\mathbf{k}, \quad |q_i| = 1
+\end{equation}
+
+The update rule is Hamilton product (quaternion composition):
+
+\begin{equation}
+q_i(t+1) = q_i(t) \otimes \delta q_i(t)
+\end{equation}
+
+where $\delta q_i$ is a small random perturbation quaternion drawn near the identity. Following the Closure-SDK \cite{daSilva2025}, we define:
+
+\begin{itemize}
+  \item \textbf{Energy}: $\sigma_i = \arccos(|w_i|) \in [0, \pi/2]$, the geodesic distance from the identity on $S^3$.
+  \item \textbf{Closure}: The running product $Q(t) = \prod_{s=0}^{t} \delta q(s)$ \emph{closes} when $\sigma(Q) \to 0$, i.e., the product returns to the neighborhood of the identity after excursion.
+  \item \textbf{Hopf decomposition}: The quaternion decomposes into a scalar channel $W = w^2$ and vector channels $R = x^2, G = y^2, B = z^2$, satisfying $W + R + G + B = 1$.
+\end{itemize}
+
+The critical innovation of the $S^3$ version (Experiment 7) is that \textbf{no threshold parameter is needed}. The closure cadence---the rate at which running products return to identity---itself varies with the energy of perturbations $\sigma(\delta q)$, producing a force hierarchy from geometry alone.
+
+The three sufficient operations from Closure-SDK are:
+
+\begin{enumerate}
+  \item \textbf{compose}: $q_1 \otimes q_2$ (Hamilton product)
+  \item \textbf{sigma}: $\sigma(q) = \arccos(|w|)$ (energy measure)
+  \item \textbf{close}: detect when $\sigma \to 0$ (closure event)
+\end{enumerate}
+
+\section{Experiments and Results}
+
+We conducted eight experiments, numbered 0 through 8 (Experiment 0 being the baseline). Results are summarized in Table~\ref{tab:experiments} and described in detail below.
+
+\begin{table}[ht]
+\centering
+\caption{Summary of Experiments}
+\label{tab:experiments}
+\begin{tabular}{cllll}
+\toprule
+Exp & Description & Result & Key Metric \\
+\midrule
+0 & Force hierarchy from single $\tau$ & \checkmark & CV of firing rates: $1.37 \to 0.02$ at high energy \\
+1 & Signed energy (attraction/repulsion) & \texttimes & Balanced forces; no scale-dependent cancellation \\
+2 & Dynamic threshold (confinement) & \texttimes & No improvement over static threshold \\
+3 & 2D lattice & \checkmark & Hierarchy preserved across dimensions \\
+4 & Conserved quantity search & $\bigstar$ & Entropy CV = 0.018; $\langle E \rangle / \tau \approx 0.73$ (CV = 0.020) \\
+5 & Coupling constant ratios & $\sim$ & 3 orders of magnitude (need 39) \\
+6 & Quaternion states on $S^3$ & $\bigstar$ & W-channel variance $5.1\times$ higher than XYZ \\
+7 & Closure-driven forces & $\bigstar$ & No $\tau$; Hopf shift: 100\% W $\to$ 96\% RGB \\
+8 & Recursive hierarchy & $\bigstar$ & Levels fire $47$--$85\times$ slower; Level 0: 76\% RGB, Level 1: 100\% W \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\noindent\small\emph{Legend: \checkmark\ = success, \texttimes\ = failure, $\bigstar$ = unexpected/notable, $\sim$ = partial}
+\end{table}
+
+\subsection{Experiment 0: Force Hierarchy from a Single Parameter}
+
+\textbf{Setup.} A 1D lattice of 100 cells, threshold $\tau$ varied over four orders of magnitude. 10,000 timesteps per run.
+
+\textbf{Result: \checkmark} Firing rates decrease monotonically with $\tau$, producing a qualitative hierarchy. At low energy (large $\tau$ spread), the coefficient of variation (CV) of firing rates across force regimes is 1.37, reflecting strong differentiation. At high energy (all $\tau$ values compressed), CV drops to 0.02---the forces \emph{converge}. This mirrors the qualitative behavior of running coupling constants approaching the GUT scale.
+
+\subsection{Experiment 1: Signed Energy and Attraction/Repulsion}
+
+\textbf{Setup.} Cells carry signed energy. Positive values represent repulsion; negative values represent attraction. The goal was to reproduce the sign structure of electromagnetic interactions.
+
+\textbf{Result: \texttimes} The lattice produces balanced positive and negative firing events, but there is no emergent scale-dependent cancellation. Charges do not cancel at macroscopic scales as they do in electromagnetism. The sign structure is a necessary but insufficient ingredient.
+
+\subsection{Experiment 2: Dynamic Threshold for Confinement}
+
+\textbf{Setup.} The threshold $\tau$ increases with the distance between fired cells, aiming to model confinement (the strong force growing with distance).
+
+\textbf{Result: \texttimes} Dynamic thresholds did not produce confinement-like behavior. The firing pattern changes quantitatively but does not exhibit the qualitative feature of increasing force with distance. We conclude that confinement requires additional structure beyond a single scalar threshold.
+
+\subsection{Experiment 3: 2D Lattice}
+
+\textbf{Setup.} A $32 \times 32$ lattice with nearest-neighbor coupling, otherwise identical to Experiment~0.
+
+\textbf{Result: \checkmark} The force hierarchy is preserved in two dimensions. The ordering of firing rates across $\tau$ values is qualitatively identical to the 1D case. This suggests the hierarchy is a property of the update rule, not the lattice topology.
+
+\subsection{Experiment 4: Conserved Quantity Search}
+
+\textbf{Setup.} Systematic scan of statistical quantities across force regimes: mean energy, variance, entropy of the firing distribution, energy-to-threshold ratio.
+
+\textbf{Result: $\bigstar$} Two conserved quantities emerged:
+
+\begin{enumerate}
+  \item \textbf{Firing entropy} is constant across all threshold values, with CV = 0.018. This was not imposed or tuned. The Shannon entropy of the firing time distribution is the same whether the threshold corresponds to the ``strong force'' or ``gravity.''
+
+  \item \textbf{The ratio $\langle E \rangle / \tau \approx 0.73$} is constant across all force regimes (CV = 0.020). The mean cell energy stabilizes at approximately 73\% of the activation threshold regardless of scale.
+\end{enumerate}
+
+The entropy conservation is the single most robust quantitative result in this work. We do not have an analytical explanation for it.
+
+\subsection{Experiment 5: Coupling Constant Ratios}
+
+\textbf{Setup.} Extract effective coupling constants (firing rate $\times$ redistribution amplitude) and compare ratios to the known force hierarchy.
+
+\textbf{Result: $\sim$} The model produces approximately three orders of magnitude of dynamic range in coupling strength. The real hierarchy spans roughly 39 orders of magnitude (from the strong force to gravity). The qualitative ordering is correct, but the quantitative gap is enormous. We regard this as a partial success at best.
+
+\subsection{Experiment 6: Quaternion States on $S^3$}
+
+\textbf{Setup.} Replace scalar cell states with unit quaternions. Update via Hamilton product with random perturbations. Measure the variance of each component channel $(w, x, y, z)$ over time.
+
+\textbf{Result: $\bigstar$} The scalar channel $W$ exhibits $5.1\times$ higher variance than the vector channels $X$, $Y$, $Z$, which are approximately equal to each other. The geometry of $S^3$ naturally separates a scalar degree of freedom (existence/magnitude) from three vector degrees of freedom (orientation/arrangement). This $1+3$ decomposition is not imposed by the model; it is a consequence of quaternion geometry under random composition.
+
+\subsection{Experiment 7: Closure-Driven Forces}
+
+\textbf{Setup.} The threshold parameter $\tau$ is eliminated entirely. Instead, force-like behavior emerges from \emph{closure cadence}: the rate at which running quaternion products return to the identity on $S^3$. Perturbation energy $\sigma(\delta q)$ is varied.
+
+\textbf{Result: $\bigstar$} This is the central result. At low perturbation energy ($\sigma \ll 1$), closure events are frequent and the Hopf decomposition is 100\% W-dominant---the dynamics are purely scalar. At high perturbation energy ($\sigma \gg 1$), closure events are rare and the decomposition shifts to 96\% RGB-dominant---the dynamics are almost entirely vectorial. The hierarchy of closure cadences, from fast (strong-force-like) to slow (gravity-like), emerges from a single geometric mechanism with no free parameters beyond the perturbation energy scale.
+
+\subsection{Experiment 8: Recursive Hierarchy}
+
+\textbf{Setup.} A two-level hierarchy: Level 0 cells fire according to their own closure cadence, and their collective firing events become the input perturbations for Level 1 cells.
+
+\textbf{Result: $\bigstar$} Level 1 fires $47$--$85\times$ slower than Level 0, consistent with a hierarchical force structure. The Hopf decomposition at Level 0 (fast, high-frequency) is 76\% RGB (vector-dominant). At Level 1 (slow, low-frequency), it is 100\% W (scalar-dominant). This maps suggestively onto the physical picture: high-energy (strong/EM) forces are orientation-rich, while low-energy (gravitational) force is purely scalar.
+
+\section{Analytical Results}
+
+Beyond the simulation experiments, we performed two analytical investigations of the model's structural properties.
+
+\subsection{Hierarchy Ratio}
+
+We measured the ratio of closure cadences between adjacent force levels across 50 random seeds and multiple energy scales.
+
+\begin{itemize}
+  \item \textbf{Across seeds} (fixed energy): The hierarchy ratio has mean $\approx 85{:}1$ with CV = 0.59. The ratio varies substantially from run to run. It is \emph{stochastic}, not a geometric constant.
+  \item \textbf{Across energy scales} (fixed seed ensemble): The hierarchy ratio has CV = 0.26. It is more stable across energy scales than across seeds.
+\end{itemize}
+
+\textbf{Interpretation.} The hierarchy ratio is \emph{scale-independent} but \emph{seed-dependent}. This means the model produces a consistent qualitative ordering of forces regardless of the overall energy scale, but the precise numerical ratio is not determined by geometry. The $\sim 85{:}1$ mean ratio is far from the $\sim 10^{39}$ ratio between the strong force and gravity, consistent with the model's limited dynamic range (Experiment~5).
+
+\subsection{Hopf Shift: A Geometric Theorem}
+
+The most analytically tractable result concerns the Hopf decomposition shift observed in Experiments 7 and 8. We can prove:
+
+\textbf{Claim.} For a unit quaternion $q = \cos\sigma + \sin\sigma\,\hat{v}$ (where $\hat{v}$ is a unit pure quaternion and $\sigma = \arccos(|w|)$ is the energy), the W-fraction $W = w^2 = \cos^2\sigma$ exceeds $1/2$ if and only if $\sigma < \pi/4$.
+
+\emph{Proof.} $W = \cos^2\sigma > 1/2 \iff \cos\sigma > 1/\sqrt{2} \iff \sigma < \pi/4 \approx 0.785$. $\square$
+
+This is a theorem about the geometry of $S^3$, not an emergent property of the simulation. The transition point $\sigma = \pi/4$ is the \emph{equator} of the Hopf fibration in the relevant coordinates.
+
+\textbf{However}, the following observation \emph{is} novel: hierarchical closure necessarily produces this shift. In the low-energy regime, perturbations are small ($\sigma \ll \pi/4$), closure is frequent, and the dynamics are W-dominant (scalar). In the high-energy regime, perturbations are large ($\sigma \gg \pi/4$), closure is rare, and the dynamics are RGB-dominant (vector). The \emph{coupling} of hierarchy and Hopf decomposition is not a tautology---it requires that the closure mechanism preserves the energy-Hopf relationship through the running product, which it does because Hamilton product is an isometry of $S^3$.
+
+This gives us a structural prediction: \textbf{any hierarchical closure process on $S^3$ will separate scalar from vector degrees of freedom as a function of energy scale.} This is falsifiable and, to our knowledge, has not been stated in the quaternion dynamics literature.
+
+\section{Discussion}
+
+\subsection{What Works}
+
+Three features of the model are robust and, in our assessment, non-trivial:
+
+\textbf{Entropy conservation} (Experiment 4) is the strongest result. The firing entropy is identical (to within 1.8\% CV) across all force regimes. We did not tune for this. We do not understand why it holds. It is consistent with Verlinde's entropic gravity program \cite{Verlinde2011} in the weak sense that informational quantities are conserved where dynamical quantities are not, but we make no claim of a formal connection. This result is the most likely to survive scrutiny and the most in need of analytical explanation.
+
+\textbf{Existence/arrangement separation} (Experiments 6--8) is geometrically necessary given the Hopf shift theorem, but its coupling to hierarchical closure is a novel observation. The fact that slow (gravity-like) dynamics are W-dominant (scalar, ``existence'') while fast (strong-force-like) dynamics are RGB-dominant (vector, ``arrangement/orientation'') is suggestive. In the Closure-SDK language \cite{daSilva2025}, W encodes \emph{whether something exists} and RGB encodes \emph{where it is}. The model predicts that these two aspects of physical reality decouple across energy scales---not as a modeling assumption, but as a geometric consequence.
+
+\textbf{High-energy convergence} (Experiment 0) reproduces the qualitative feature of GUT-scale unification: forces that are strongly differentiated at low energy become indistinguishable at high energy (CV dropping from 1.37 to 0.02). This is built into the model in the sense that compressing threshold values necessarily compresses firing rates, but the smoothness of the convergence and the quantitative behavior of the CV curve were not guaranteed.
+
+\subsection{What Fails}
+
+The model fails in three important respects:
+
+\textbf{No confinement.} The strong force exhibits asymptotic freedom (weakening at short distances) and confinement (strengthening at long distances). Our model, in both the threshold and closure versions, produces neither. Experiment 2's dynamic threshold was a naive attempt that did not work. Confinement likely requires non-Abelian gauge structure that our single update rule does not capture.
+
+\textbf{No electromagnetic cancellation.} In nature, electric charges cancel at macroscopic scales---bulk matter is electrically neutral. Our signed-energy model (Experiment 1) produces balanced positive and negative firing events but no mechanism for scale-dependent cancellation. This is arguably the most physically important failure, since the large-scale neutrality of electromagnetism is central to the observed force hierarchy.
+
+\textbf{Quantitative dynamic range.} We produce $\sim 3$ orders of magnitude in force ratios. Nature produces $\sim 39$. This is not a rounding error. The model is qualitative at best, and the $85{:}1$ hierarchy ratio is not close to $10^{39}$.
+
+\subsection{What It Means}
+
+We do not claim this model is correct. We claim it is \emph{interesting} in the following narrow sense: a single update rule (quaternion composition) on a single geometric space ($S^3$) with no force-specific parameters produces:
+
+\begin{enumerate}
+  \item A qualitative force hierarchy
+  \item High-energy convergence
+  \item Entropy conservation across regimes
+  \item A geometric separation of scalar and vector degrees of freedom correlated with energy scale
+\end{enumerate}
+
+These four features map onto known physics in ways that are not entirely trivial---but they fall far short of a theory. The model is best understood as a \emph{hypothesis generator}: it identifies structural questions (why is entropy conserved? why does the scalar/vector decomposition correlate with hierarchy?) that can be pursued analytically or in richer models.
+
+\subsection{Connection to Closure-SDK}
+
+The Closure-SDK framework \cite{daSilva2025} provides the conceptual vocabulary for the $S^3$ experiments. In that framework:
+
+\begin{itemize}
+  \item $\sigma = \arccos(|w|)$ is the energy of a state: its geodesic distance from identity.
+  \item \emph{Closure} is the return to $\sigma = 0$: a completed cycle of excursion and return.
+  \item The Hopf decomposition $W + R + G + B = 1$ separates existence ($W$) from position ($RGB$).
+  \item Three operations suffice for the full dynamics: \textbf{compose} ($q_1 \otimes q_2$), \textbf{sigma} ($\arccos|w|$), and \textbf{close} (detect $\sigma \to 0$).
+\end{itemize}
+
+Our contribution is to show that running these three operations on a lattice, with no additional structure, produces the features described above. The Closure-SDK's minimalism is what makes the results interpretable: there is nowhere for force-specific information to hide.
+
+\subsection{Connections to Known Physics}
+
+We note several structural parallels without claiming causal connections:
+
+\begin{itemize}
+  \item $\mathrm{SU}(2) \cong S^3$ is the gauge group of the weak nuclear force. We did not choose $S^3$ to match this---we chose it as the unit quaternion group, the richest associative division algebra by Hurwitz's theorem \cite{Hurwitz1898}. The coincidence is structural, not designed.
+  \item \textbf{Running coupling constants} converging at the GUT scale \cite{Amaldi1991} are qualitatively reproduced by our high-energy convergence (Experiment~0).
+  \item \textbf{Verlinde's entropic gravity} \cite{Verlinde2011} argues that gravitational force emerges from entropy gradients. Our entropy conservation across force regimes (Experiment~4) is consonant with this idea, though the connection is loose.
+  \item The $\mathbf{1+3}$ \textbf{structure} of quaternions (one scalar, three vector components) echoes the $1+3$ structure of spacetime. We do not claim this is more than coincidence, but we note that Hurwitz's theorem makes this decomposition \emph{algebraically necessary} for the richest associative division algebra.
+\end{itemize}
+
+\section{Conclusion}
+
+We have presented a toy model in which a single update rule---quaternion composition on $S^3$---produces a qualitative force hierarchy, high-energy convergence, entropy conservation, and a geometric separation of scalar and vector degrees of freedom. The model fails to reproduce confinement, electromagnetic cancellation, or the quantitative dynamic range of the real force hierarchy. It is not a theory of physics.
+
+The three claims we advance, in decreasing order of confidence:
+
+\begin{enumerate}
+  \item \textbf{Entropy conservation across force regimes} (CV = 0.018) is unexplained, untuned, and robust across parameters. It is the most likely to be analytically tractable and the most in need of explanation.
+
+  \item \textbf{Hierarchical closure on $S^3$ necessarily produces existence/arrangement separation.} This follows from the Hopf shift theorem ($\sigma < \pi/4 \Rightarrow W > 1/2$) combined with the observation that Hamilton product preserves the energy-Hopf relationship. It is derivable but, to our knowledge, novel.
+
+  \item \textbf{The qualitative force hierarchy and high-energy convergence emerge from a single mechanism} with no force-specific parameters. This is the weakest claim because it is the most model-dependent, but it is the one that motivated the work.
+\end{enumerate}
+
+The model's value, if any, is as a falsifiable framework. It makes specific predictions: entropy conservation should hold for any threshold-based firing model on any lattice topology; the Hopf shift should hold for any closure process on $S^3$; the hierarchy ratio should be scale-independent. These can be tested, and the model can be killed.
+
+We publish the failures with equal weight as the successes. The goal was never to solve unification with a lattice simulation. The goal was to translate a physical intuition---\emph{one mechanism, different energy scales}---into a computational object that can be examined, criticized, and either extended or discarded.
+
+\nocite{Penrose2004, Baez2002}
+\bibliographystyle{unsrt}
+\bibliography{refs}
+
+\bigskip
+\noindent\emph{Correspondence: Leo Guinan, MetaSPN / Proximity Fund}
+
+\bigskip
+\noindent Code and data: \url{https://github.com/leo-guinan/gut-driven-gut}
+
+\end{document}

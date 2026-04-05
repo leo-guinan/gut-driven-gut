@@ -28,3 +28,11 @@ Thumbs.db
 
 # Results — keep generated plots and data in repo for easy viewing
 # (they're small and make the README work on GitHub)
+paper/arxiv/*.aux
+paper/arxiv/*.bbl
+paper/arxiv/*.blg
+paper/arxiv/*.log
+paper/arxiv/*.out
+paper/arxiv/*.pdf
+paper/arxiv/*.synctex*
+paper/submission/
