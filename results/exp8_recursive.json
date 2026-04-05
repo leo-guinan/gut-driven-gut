@@ -1,0 +1,36 @@
+{
+  "level_0": {
+    "n_cells": 60,
+    "total_closures": 188,
+    "avg_rate": 0.004,
+    "avg_support": 169.32978723404256,
+    "avg_peak_sigma": 1.3023438053669412,
+    "w_pct": 23.93617021276596,
+    "x_pct": 25.0,
+    "y_pct": 29.25531914893617,
+    "z_pct": 21.808510638297875,
+    "rgb_pct": 76.06382978723404
+  },
+  "level_1": {
+    "n_cells": 30,
+    "total_closures": 4,
+    "avg_rate": 0.0003333333333333333,
+    "avg_support": 5.75,
+    "avg_peak_sigma": 0.5117060006482946,
+    "w_pct": 100.0,
+    "x_pct": 0.0,
+    "y_pct": 0.0,
+    "z_pct": 0.0,
+    "rgb_pct": 0.0
+  },
+  "level_2": {
+    "n_cells": 15,
+    "total_closures": 0,
+    "avg_rate": 0,
+    "avg_support": 0,
+    "w_pct": 0,
+    "x_pct": 0,
+    "y_pct": 0,
+    "z_pct": 0
+  }
+}
