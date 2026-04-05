@@ -44,11 +44,11 @@ Just one threshold value that differs.
 
 ## Results — Scorecard
 
-Five experiments, honest accounting. Hits and misses published with equal weight.
+Six experiments, honest accounting. Hits and misses published with equal weight.
 
 ![Scorecard](results/summary_scorecard.png)
 
-**5 hits, 2 misses, 1 partial.**
+**7 hits, 2 misses, 1 partial.**
 
 ---
 
@@ -198,6 +198,59 @@ symmetry groups, not just a scalar cost parameter.
 
 ---
 
+## Experiment 6: Quaternion States on S³ (Closure-SDK) ★
+
+**Question:** What if cells live on the 3-sphere (unit quaternions) instead
+of the real line? The "threshold" becomes σ (geodesic distance from identity),
+the "update" becomes Hamilton product (quaternion composition). Does the
+four-channel structure (W, X, Y, Z) naturally separate into different behaviors?
+
+**Why this matters:** The Standard Model gauge group includes SU(2), which IS
+the unit quaternions (S³). This isn't a design choice — it's Hurwitz's theorem:
+S³ is the richest space where sequential composition is still associative.
+
+**Uses:** [Closure-SDK](https://github.com/faltz009/Closure-SDK) by Walter da Silva
+for quaternion operations on S³.
+
+**Results:**
+
+| Finding | Status |
+|---------|--------|
+| Force hierarchy preserved | ✓ (with EM/weak swap) |
+| High-energy convergence | ✓ (CV: 1.58 → 0.40) |
+| **W vs XYZ channel separation** | **★** |
+
+The W channel (scalar part = "does the update exist?") has 5.1× higher
+variance than the XYZ channels (vector part = "how is it oriented?").
+
+```
+W channel std:    0.9467  (existence fluctuates wildly)
+X channel std:    0.1631  (orientation is tightly constrained)
+Y channel std:    0.1842
+Z channel std:    0.2056
+```
+
+**This was not put in by hand.** The geometry of S³ naturally separates
+scalar (existence) from vector (orientation) degrees of freedom. The
+W channel behaves differently from XYZ — mirroring the 1 + 3 structure
+of SU(2) (one scalar degree of freedom + three generators).
+
+![Experiment 6](results/exp6_quaternion.png)
+
+**What this means:** When the update function lives on the right manifold
+(S³ = SU(2)), the internal structure of that manifold creates behavioral
+separation that the scalar model couldn't produce. The W channel (existence)
+fluctuates like a scalar threshold model. The XYZ channels (orientation)
+are constrained by the sphere's geometry. You get two distinct behavioral
+regimes — existence and orientation — from ONE mechanism on ONE manifold.
+
+The convergence is slower than the scalar model (CV reaches 0.40, not 0.02)
+because S³ has more structure to "melt" at high energy. The hierarchy has
+a minor swap (EM/weak), likely because σ's nonlinear relationship to
+threshold creates a different ordering in the middle range.
+
+---
+
 ## What This Model Can't Do
 
 - **Confinement** (strong force getting stronger with distance) — Experiment 2
@@ -213,6 +266,8 @@ symmetry groups, not just a scalar cost parameter.
 - **Dimension-independent behavior** — Experiment 3
 - **Entropy conservation** across all thresholds — Experiment 4
 - **Constant energy/threshold ratio** — Experiment 4
+- **W/XYZ channel separation on S³** — Experiment 6 (Closure-SDK)
+- **Existence/orientation decomposition from geometry** — Experiment 6
 
 ## Running It
 
@@ -241,9 +296,11 @@ sim/
   exp3_2d.py                # Experiment 3: 2D Lattice
   exp4_conservation.py      # Experiment 4: Conserved Quantity Search
   exp5_coupling_ratios.py   # Experiment 5: Coupling Constants
+  exp6_quaternion.py        # Experiment 6: S³ Quaternion States
   run_all.py                # Run all experiments
   visualize.py              # Plots for Experiment 0
   visualize_experiments.py  # Plots for Experiments 1-5
+  visualize_exp6.py         # Plots for Experiment 6
 results/
   *.json                    # Raw simulation data
   *.png                     # Generated plots

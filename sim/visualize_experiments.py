@@ -316,6 +316,8 @@ def plot_summary():
         ("Exp 4: Conserved Quantity", "★", "ENTROPY conserved (CV=0.018!)"),
         ("Exp 4: Energy/τ ratio", "★", "energy_mean/τ ≈ 0.73 for all forces"),
         ("Exp 5: Quantitative Ratios", "~", "~3 OoM range; need 39 for full hierarchy"),
+        ("Exp 6: S³ Hierarchy", "✓", "Force hierarchy preserved on quaternion manifold"),
+        ("Exp 6: W/XYZ Separation", "★", "W channel 5.1× more variable — geometry separates"),
     ]
     
     y_pos = np.arange(len(experiments))
