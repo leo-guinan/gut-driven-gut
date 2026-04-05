@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+title: "Closure Cadence on S³: A Toy Model of Force Hierarchy from Quaternion Composition"
+authors:
+  - family-names: Guinan
+    given-names: Leo
+    affiliation: "MetaSPN / Proximity Fund"
+  - family-names: da Silva
+    given-names: Walter Henrique Alves
+    affiliation: "Open Research Institute"
+type: software
+license: MIT
+repository-code: "https://github.com/leo-guinan/gut-driven-gut"
+keywords:
+  - force unification
+  - quaternion dynamics
+  - S3 geometry
+  - toy model
+  - closure
+  - Hopf fibration
+  - computational physics
+abstract: >-
+  A toy computational model exploring whether the four fundamental forces
+  of physics arise from a single update mechanism operating at different
+  energy scales. Cells on a lattice are unit quaternions updated by
+  Hamilton product. Force-like behavior emerges from closure cadence —
+  the rate at which running products return to identity on S³. Eight
+  experiments with honest accounting: entropy conservation (CV=0.018),
+  Hopf W/RGB shift with energy scale, qualitative force hierarchy and
+  high-energy convergence. Failures documented: no confinement, no EM
+  cancellation, 3 of 39 orders of magnitude.
