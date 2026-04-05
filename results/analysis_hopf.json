@@ -1,0 +1,54 @@
+{
+  "null_hypothesis": {
+    "sigma_0.300": {
+      "sigma": 0.3,
+      "cos_sigma": 0.955336489125606,
+      "sin_sigma": 0.29552020666133955,
+      "w_pct": 100.0,
+      "rgb_pct": 0.0,
+      "predicted_dominant": "W"
+    },
+    "sigma_0.500": {
+      "sigma": 0.5,
+      "cos_sigma": 0.8775825618903728,
+      "sin_sigma": 0.479425538604203,
+      "w_pct": 100.0,
+      "rgb_pct": 0.0,
+      "predicted_dominant": "W"
+    },
+    "sigma_0.785": {
+      "sigma": 0.785,
+      "cos_sigma": 0.7073882691671998,
+      "sin_sigma": 0.706825181105366,
+      "w_pct": 100.0,
+      "rgb_pct": 0.0,
+      "predicted_dominant": "W"
+    },
+    "sigma_1.000": {
+      "sigma": 1.0,
+      "cos_sigma": 0.5403023058681398,
+      "sin_sigma": 0.8414709848078965,
+      "w_pct": 2.19,
+      "rgb_pct": 97.81,
+      "predicted_dominant": "RGB"
+    },
+    "sigma_1.200": {
+      "sigma": 1.2,
+      "cos_sigma": 0.3623577544766736,
+      "sin_sigma": 0.9320390859672263,
+      "w_pct": 0.0,
+      "rgb_pct": 100.0,
+      "predicted_dominant": "RGB"
+    },
+    "sigma_1.500": {
+      "sigma": 1.5,
+      "cos_sigma": 0.0707372016677029,
+      "sin_sigma": 0.9974949866040544,
+      "w_pct": 0.0,
+      "rgb_pct": 100.0,
+      "predicted_dominant": "RGB"
+    }
+  },
+  "crossover_sigma": 0.7853981633974483,
+  "status": "geometrically_necessary"
+}
